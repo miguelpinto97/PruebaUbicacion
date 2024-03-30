@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geolocation API</title>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+
+<div id="navbar"><span>Red Stapler - Geolocation API</span></div>
+<div id="wrapper">
+  <button id="location-button" onclick="prueba()">Get User Location</button>
+  <div id="output"></div>
+</div>
+
+<script>
+
+function prueba() {
+try{
+   if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            alert(position); // Mostrar posición en una alerta
+            $.get("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + position.coords.latitude + "," + position.coords.longitude + "&sensor=false", function(data) {
+                alert(data); // Mostrar datos de geolocalización en una alerta
+            });
+            var img = new Image();
+            img.src = "https://maps.googleapis.com/maps/api/staticmap?center=" + position.coords.latitude + "," + position.coords.longitude + "&zoom=13&size=800x400&sensor=false";
+            $('#output').html(img);
+        });
+    } else {
+        alert("Geolocalización no disponible en este navegador");
+    }
+}catch{
+alert("Geolocalización no disponible en este navegador");
+}
+
+
+}
+</script>
+
+</body>
+</html>
