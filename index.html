@@ -1,78 +1,92 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Geolocation API</title>
-<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-<link rel="stylesheet" type="text/css" href="styles.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geolocation API</title>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 <body>
 
-<div id="navbar"><span>Red Stapler - Geolocation API</span></div>
-<div id="wrapper">
-  <button id="location-button" onclick="prueba2()">Get User Location</button>
-  <div id="output"></div>
-</div>
+    <div id="navbar"><span>Red Stapler - Geolocation API</span></div>
+    <div id="wrapper">
+        <button id="location-button" onclick="prueba2()">Get User Location</button>
+        <div id="output"></div>
+    </div>
 
-<script>
-function calcularDistancia(lat1, lon1) {
-var lat2 = 0;
-var lon2 = 0;
-    var radioTierra = 6371; // Radio de la Tierra en kilómetros
-    var dLat = deg2rad(lat2 - lat1); // Convertir la diferencia de latitud a radianes
-    var dLon = deg2rad(lon2 - lon1); // Convertir la diferencia de longitud a radianes
-    var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
-            Math.sin(dLon / 2) * Math.sin(dLon / 2);
-    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    var distancia = radioTierra * c; // Distancia en kilómetros
-    return distancia;
-}
+    <script>
 
-function deg2rad(deg) {
-    return deg * (Math.PI / 180);
-}
-function prueba2(){
+        function obtenerDireccionConCoordenadas(lat1, lon1, callback) {
+            var Http = new XMLHttpRequest();
+            var latitud = lat1;
+            var logitud = lon1;
+            var APIKEY = "AIzaSyB3hC0qK2wwZQFBWBkM7AtNLWLh0_f2dCM";
 
+            var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + latitud + ',' + logitud
+                + '&key=' + APIKEY;
+            Http.open('GET', url);
+            Http.send();
+            Http.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var jsonResponse = JSON.parse(Http.responseText);
+                    var direccion = jsonResponse.results[0].formatted_address;
+                    callback(direccion);
+                }
+            }
+        }
 
-   if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(function(position) {
+        function calcularDistancia(lat1, lon1) {
+            var lat2 = -12.1573319;
+            var lon2 = -76.972619;
+            var radioTierra = 6371; // Radio de la Tierra en kilómetros
+            var dLat = deg2rad(lat2 - lat1); // Convertir la diferencia de latitud a radianes
+            var dLon = deg2rad(lon2 - lon1); // Convertir la diferencia de longitud a radianes
+            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            var distancia = radioTierra * c; // Distancia en kilómetros
+            distancia = distancia.toFixed(2);
 
+            return distancia;
+        }
 
-
-var Http = new XMLHttpRequest();
-var latitud = position.coords.latitude;
-var logitud = position.coords.longitude;
-var APIKEY = "AIzaSyB3hC0qK2wwZQFBWBkM7AtNLWLh0_f2dCM";
-
-var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + latitud + ',' + logitud
-    + '&key='+APIKEY;
-Http.open('POST', url);
-Http.send();
-Http.onreadystatechange = (e) => {
-    var jsonResponse = JSON.parse(Http.responseText);
-
-    //console.log(Http.responseText);
-alert(jsonResponse .results[0].formatted_address);
-alert("Latitud: " + latitud );
-alert("Longitud: " + logitud );
-
-}
-
-            var img = new Image();
-            img.src = "https://maps.googleapis.com/maps/api/staticmap?center=" + position.coords.latitude + "," + position.coords.longitude + "&zoom=13&size=800x400&sensor=false";
-            $('#output').html(img);
-        });
-    } else {
-        alert("Geolocalización no disponible en este navegador");
-    }
+        function deg2rad(deg) {
+            return deg * (Math.PI / 180);
+        }
+        function prueba2() {
 
 
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
 
-}
-</script>
+                    var latitud = position.coords.latitude;
+                    var longitud = position.coords.longitude;
+
+                    var direccion = "";
+
+                    obtenerDireccionConCoordenadas(latitud, longitud, function (response) {
+
+                        var distancia = calcularDistancia(latitud,longitud)
+
+                        alert("Tu Dirección es: " + response);
+                        alert("Te encuentras a: " + distancia + " km de nosotros (Justo Naveda 1035, SJM)")
+
+
+                    });
+
+
+                });
+            } else {
+                alert("Geolocalización no disponible en este navegador");
+            }
+
+
+
+        }
+    </script>
 
 </body>
 </html>
