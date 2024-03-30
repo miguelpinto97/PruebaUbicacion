@@ -14,6 +14,7 @@
     <div id="wrapper">
         <button id="location-button" onclick="prueba2()">Get User Location</button>
         <div id="output"></div>
+        <div id="output2"></div>
     </div>
 
     <script>
@@ -70,10 +71,16 @@
                     obtenerDireccionConCoordenadas(latitud, longitud, function (response) {
 
                         var distancia = calcularDistancia(latitud,longitud)
+                        var miDiv = document.getElementById("output");
 
-                        alert("Tu Dirección es: " + response);
-                        alert("Te encuentras a: " + distancia + " km de nosotros (Justo Naveda 1035, SJM)")
+                        // Asignar un contenido al div
+                        miDiv.innerHTML = "Tu Dirección es: " + response + "<br>" + "Te encuentras a: " + distancia + " km de nosotros (Justo Naveda 1035, SJM)";
+                        var APIKEY = "AIzaSyB3hC0qK2wwZQFBWBkM7AtNLWLh0_f2dCM";
 
+                        var img = new Image();
+                        img.src = "https://maps.googleapis.com/maps/api/staticmap?center=" + latitud + "," + longitud + "&zoom=13&size=300x300&sensor=true" + '&key=' + APIKEY +
+                            "&markers=color:red%7C" + latitud + "," + longitud ;
+                        $('#output2').html(img);
 
                     });
 
