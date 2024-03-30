@@ -12,20 +12,37 @@
 
 <div id="navbar"><span>Red Stapler - Geolocation API</span></div>
 <div id="wrapper">
-  <button id="location-button" onclick="prueba()">Get User Location</button>
+  <button id="location-button" onclick="prueba2()">Get User Location</button>
   <div id="output"></div>
 </div>
 
 <script>
 
-function prueba() {
-try{
+function prueba2(){
+
+
    if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
-            alert(position); // Mostrar posición en una alerta
-            $.get("https://maps.googleapis.com/maps/api/geocode/json?latlng=" + position.coords.latitude + "," + position.coords.longitude + "&sensor=false", function(data) {
-                alert(data); // Mostrar datos de geolocalización en una alerta
-            });
+
+
+
+var Http = new XMLHttpRequest();
+var latitud = position.coords.latitude;
+var logitud = position.coords.longitude;
+var APIKEY = "AIzaSyB3hC0qK2wwZQFBWBkM7AtNLWLh0_f2dCM";
+
+var url = 'https://maps.googleapis.com/maps/api/geocode/json?latlng=' + latitud + ',' + logitud
+    + '&key='+APIKEY;
+Http.open('POST', url);
+Http.send();
+Http.onreadystatechange = (e) => {
+    var jsonResponse = JSON.parse(Http.responseText);
+
+    //console.log(Http.responseText);
+alert(jsonResponse .results[0].formatted_address);
+
+}
+
             var img = new Image();
             img.src = "https://maps.googleapis.com/maps/api/staticmap?center=" + position.coords.latitude + "," + position.coords.longitude + "&zoom=13&size=800x400&sensor=false";
             $('#output').html(img);
@@ -33,9 +50,7 @@ try{
     } else {
         alert("Geolocalización no disponible en este navegador");
     }
-}catch{
-alert("Geolocalización no disponible en este navegador");
-}
+
 
 
 }
